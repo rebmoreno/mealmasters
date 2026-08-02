@@ -7,9 +7,14 @@ function App() {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=')
+    setIsLoading(true);
+    setError(null);
+
+    fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`)
       .then((response) => {
         if (!response.ok) throw new Error('Cloud not load meals');
         return response.json();
@@ -23,7 +28,7 @@ function App() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [searchTerm]);
   
   return (
     <main className="app">
@@ -37,6 +42,26 @@ function App() {
         <p className="app__status">No meals found.</p>
       )}
 
+      <div className="search">
+        <label className="search__label" htmlFor="meal-search">
+          Search meals
+        </label>
+        <input
+          id="meal-search"
+          className="search__input"
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Try chicken, pasta, beef..."
+        />
+        <button
+          className="search__button"
+          type="button"
+          onClick={() => setSearchTerm(query)}
+        >
+          Search
+        </button>
+      </div>
 
       <div className="meal-list">
         {meals.map((meal) => (

@@ -54,3 +54,26 @@
 }
 
 .app__status--error { color: #b91c1c; }
+
+.search { margin-bottom: 16px; }
+.search__label { display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px; }
+.search__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font: inherit;
+  margin-bottom: 8px;
+}
+.search__input:focus-visible { outline: 2px solid #16a34a; outline-offset: 1px; }
+.search__button {
+  width: 100%;
+  padding: 10px;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
