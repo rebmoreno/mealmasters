@@ -2,11 +2,18 @@ interface MealCardProps {
   name: string;
   category: string;
   image: string;
+  isSelected: boolean;
+  onSelect: () => void;
 }
 
-function MealCard({ name, category, image }: MealCardProps) {
+function MealCard({ name, category, image, isSelected, onSelect }: MealCardProps) {
   return (
-    <button className="meal-card" type="button">
+    <button
+      className={isSelected ? 'meal-card meal-card--selected' : 'meal-card'}
+      type="button"
+      onClick={onSelect}
+      aria-pressed={isSelected}
+    >
       <img className="meal-card__thumb" src={image} alt="" />
       <span className="meal-card__text">
         <span className="meal-card__name">{name}</span>

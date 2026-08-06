@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { ChevronLeft } from 'lucide-react';
 import MealCard from './components/MealCard';
+import TabBar from './components/TabBar';
 import type { Meal, MealSearchResponse } from './types';
 
 function App() {
@@ -9,6 +11,15 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMeals, setSelectedMeals] = useState<Meal[]>([]);
+
+  function toggleMeal(meal: Meal) {
+    setSelectedMeals((current) =>
+      current.some((m) => m.idMeal === meal.idMeal)
+        ? current.filter((m) => m.idMeal !== meal.idMeal)
+        : [...current, meal]
+    );
+  }
 
   useEffect(() => {
     setIsLoading(true);
@@ -32,7 +43,12 @@ function App() {
   
   return (
     <main className="app">
-      <h1 className="app__title">Choose Meals</h1>
+       <div className="app__header">
+        <button className="app__back" type="button" aria-label="Go back">
+          <ChevronLeft size={22} />
+        </button>
+        <h1 className="app__title">Choose Meals</h1>
+      </div>
 
       {isLoading && <p className="app__status">Loading meals...</p>}
 
@@ -70,9 +86,19 @@ function App() {
             name={meal.strMeal}
             category={meal.strCategory}
             image={meal.strMealThumb}
+            isSelected={selectedMeals.some((m) => m.idMeal === meal.idMeal)}
+            onSelect={() => toggleMeal(meal)}
           />
         ))}
       </div>
+
+      {selectedMeals.length > 0 && (
+        <button className="generate" type="button">
+          Generate Grocery List ({selectedMeals.length})
+        </button>
+      )}
+
+      <TabBar />
     </main>
   );
 }
