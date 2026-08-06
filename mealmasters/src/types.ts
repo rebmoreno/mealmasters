@@ -5,6 +5,7 @@ export interface Meal {
     strArea: string;
     strInstructions: string;
     strMealThumb: string;
+    [key: string]: string | null;
 }
 
 export interface MealSearchResponse {

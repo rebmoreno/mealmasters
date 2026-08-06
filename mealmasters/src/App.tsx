@@ -3,6 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import MealCard from './components/MealCard';
 import TabBar from './components/TabBar';
 import type { Meal, MealSearchResponse } from './types';
+import { buildGroceryList } from './utils/ingredients';
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
   const [query, setQuery] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMeals, setSelectedMeals] = useState<Meal[]>([]);
+  const [showGroceryList, setShowGroceryList] = useState(false);
 
   function toggleMeal(meal: Meal) {
     setSelectedMeals((current) =>
@@ -43,59 +45,94 @@ function App() {
   
   return (
     <main className="app">
-       <div className="app__header">
-        <button className="app__back" type="button" aria-label="Go back">
-          <ChevronLeft size={22} />
-        </button>
-        <h1 className="app__title">Choose Meals</h1>
-      </div>
+      {showGroceryList ? (
+        <>
+          <div className="app__header">
+            <button
+              className="app__back"
+              type="button"
+              aria-label="Back to meals"
+              onClick={() => setShowGroceryList(false)}
+            >
+              <ChevronLeft size={22} />
+            </button>
+            <h1 className="app__title">Grocery List</h1>
+          </div>
 
-      {isLoading && <p className="app__status">Loading meals...</p>}
+          <ul className="grocery">
+            {buildGroceryList(selectedMeals).map((item) => (
+              <li key={item.name} className="grocery__item">
+                <span className="grocery__name">{item.name}</span>
+                {item.measures.length > 0 && (
+                  <span className="grocery__measure">
+                    {item.measures.join(', ')}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <>
+          <div className="app__header">
+            <button className="app__back" type="button" aria-label="Go back">
+              <ChevronLeft size={22} />
+            </button>
+            <h1 className="app__title">Choose Meals</h1>
+          </div>
 
-      {error && <p className="app__status app__status--error">{error}</p>}
+          {isLoading && <p className="app__status">Loading meals...</p>}
 
-      {!isLoading && !error && meals.length === 0 && (
-        <p className="app__status">No meals found.</p>
-      )}
+          {error && <p className="app__status app__status--error">{error}</p>}
 
-      <div className="search">
-        <label className="search__label" htmlFor="meal-search">
-          Search meals
-        </label>
-        <input
-          id="meal-search"
-          className="search__input"
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Try chicken, pasta, beef..."
-        />
-        <button
-          className="search__button"
-          type="button"
-          onClick={() => setSearchTerm(query)}
-        >
-          Search
-        </button>
-      </div>
+          {!isLoading && !error && meals.length === 0 && (
+            <p className="app__status">No meals found.</p>
+          )}
 
-      <div className="meal-list">
-        {meals.map((meal) => (
-          <MealCard
-            key={meal.idMeal}
-            name={meal.strMeal}
-            category={meal.strCategory}
-            image={meal.strMealThumb}
-            isSelected={selectedMeals.some((m) => m.idMeal === meal.idMeal)}
-            onSelect={() => toggleMeal(meal)}
-          />
-        ))}
-      </div>
+          <div className="search">
+            <label className="search__label" htmlFor="meal-search">
+              Search meals
+            </label>
+            <input
+              id="meal-search"
+              className="search__input"
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Try chicken, pasta, beef..."
+            />
+            <button
+              className="search__button"
+              type="button"
+              onClick={() => setSearchTerm(query)}
+            >
+              Search
+            </button>
+          </div>
 
-      {selectedMeals.length > 0 && (
-        <button className="generate" type="button">
-          Generate Grocery List ({selectedMeals.length})
-        </button>
+          <div className="meal-list">
+            {meals.map((meal) => (
+              <MealCard
+                key={meal.idMeal}
+                name={meal.strMeal}
+                category={meal.strCategory}
+                image={meal.strMealThumb}
+                isSelected={selectedMeals.some((m) => m.idMeal === meal.idMeal)}
+                onSelect={() => toggleMeal(meal)}
+              />
+            ))}
+          </div>
+
+          {selectedMeals.length > 0 && (
+            <button
+              className="generate"
+              type="button"
+              onClick={() => setShowGroceryList(true)}
+            >
+              Generate Grocery List ({selectedMeals.length})
+            </button>
+          )}
+        </>
       )}
 
       <TabBar />
